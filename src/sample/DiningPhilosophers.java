@@ -1,44 +1,54 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class DiningPhilosophers extends Application{
     public static int N = 5;
     Fork[] mForks = new Fork[N];
-    Thread[] mThreads = new Thread[N];
+    Philosopher[] mPhilosophers = new Philosopher[N];
     String[] mNames = {"Aristoteles", "Platon", "Heraclito", "Pitagoras", "Nietzsche"};
 
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        /*
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+        */
+        Button startButton = new Button();
+        startButton.setText("Start Simulation");
+        startButton.setOnAction((EventHandler<ActionEvent>) actionEvent -> new DiningPhilosophers().initialize());
+        StackPane root =  new StackPane();
+        root.getChildren().add(startButton);
+        Scene scene = new Scene(root, 600, 400);
         primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 600, 480));
+        primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    public void init(){
-        int i = 0;
-        for (i = 0; i < mForks.length; i++){
+    public void initialize(){
+        int i;
+        for (i = 0; i < 5; i++){
             mForks[i] = new Fork();
         }
 
-        for (i = 0; i < mThreads.length; i++) {
-            mThreads[i] = new Thread(new Philosopher(this, mNames[i] , i++));
+        for (i = 0; i < 5; i++) {
+            mPhilosophers[i] = new Philosopher(this, mNames[i] , i++);
         }
 
-        for (Thread thread : mThreads){
-            thread.start();
+        for (i = 0; i < 5; i++){
+            mPhilosophers[i].thread.start();
         }
-
-        launch();
     }
 
     public static void main(String[] args) {
-        new DiningPhilosophers().init();
+        launch();
     }
 }

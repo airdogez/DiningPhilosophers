@@ -3,7 +3,7 @@ package sample;
 /**
  * Created by aqws3 on 4/29/16.
  */
-public class Philosopher  implements  Runnable{
+public class Philosopher implements Runnable{
 
     enum State {THINKING, HUNGRY, EATING}
 
@@ -12,6 +12,7 @@ public class Philosopher  implements  Runnable{
     private Fork mLeftFork, mRightFork;
     private int mPosition;
     private DiningPhilosophers mContext;
+    Thread thread;
 
     public Philosopher(DiningPhilosophers context, String name, int position){
         mContext = context;
@@ -24,6 +25,8 @@ public class Philosopher  implements  Runnable{
             mLeftFork = context.mForks[context.N - 1];
         else
             mLeftFork = context.mForks[position - 1];
+
+        thread = new Thread(this);
     }
 
 
@@ -56,32 +59,33 @@ public class Philosopher  implements  Runnable{
     @Override
     public void run() {
         try {
-            while (true){
                 //Think: Sleep for a long while
                 think();
+                System.out.println(mName + " is thiking");
                 Thread.sleep(1000);
                 //Take fork
                 hungry();
+                System.out.println(mName + " is hungry");
                 mLeftFork.take();
                 Thread.sleep(500);
                 mRightFork.take();
                 Thread.sleep(500);
                 //Eat
                 eat();
+                System.out.println(mName + " is eating");
                 Thread.sleep(1000);
                 //Drop fork
+                System.out.println(mName + " is full");
                 mLeftFork.release();
                 mRightFork.release();
                 Thread.sleep(1000);
 
-            }
         } catch (InterruptedException ie) {
 
         }
         mLeftFork.releaseIfMine();
         mRightFork.releaseIfMine();
-        think();
-
+        thread = new Thread(this);
 
     }
 
