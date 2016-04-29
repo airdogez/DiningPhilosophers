@@ -6,14 +6,20 @@ package sample;
 public class Fork {
     Thread holder = null;
 
-    public synchronized void take(int philosopher) throws  InterruptedException{
+    public synchronized void take() throws  InterruptedException{
         while (holder!= null)
             wait();
         holder = Thread.currentThread();
     }
 
-    public synchronized void release(int philosopher){
+    public synchronized void release(){
         holder = null;
+        notifyAll();
+    }
+
+    public synchronized void releaseIfMine(){
+        if (holder == Thread.currentThread())
+            holder = null;
         notifyAll();
     }
 }
