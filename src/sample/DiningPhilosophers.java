@@ -15,8 +15,8 @@ import javafx.stage.Stage;
 
 public class DiningPhilosophers extends Application{
     public static int N = 5;
-    Fork[] mForks = new Fork[N];
-    //Lock forks[] = new ReentrantLock[N];
+    //Fork[] mForks = new Fork[N];
+    Lock forks[] = new ReentrantLock[N];
     Philosopher[] mPhilosophers = new Philosopher[N];
     String[] mNames = {"Aristoteles", "Platon", "Heraclito", "Pitagoras", "Nietzsche"};
 
@@ -40,8 +40,8 @@ public class DiningPhilosophers extends Application{
     public void initialize(){
         int i;
         for (i = 0; i < 5; i++){
-            mForks[i] = new Fork();
-            //forks[i] = new ReentrantLock();
+            //mForks[i] = new Fork();
+            forks[i] = new ReentrantLock();
         }
 
         for (i = 0; i < 5; i++) {

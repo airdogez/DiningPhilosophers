@@ -1,5 +1,7 @@
 package sample;
 
+import java.util.concurrent.locks.Lock;
+
 /**
  * Created by aqws3 on 4/29/16.
  */
@@ -9,7 +11,7 @@ public class Philosopher implements Runnable{
 
     private String mName;
     private State mState;
-    private Fork mLeftFork, mRightFork;
+    private Lock mLeftFork, mRightFork;
     private int mPosition;
     private DiningPhilosophers mContext;
     Thread thread;
@@ -20,11 +22,11 @@ public class Philosopher implements Runnable{
         mPosition = position;
         mState = State.THINKING;
 
-        mRightFork = context.mForks[position];
+        mRightFork = context.forks[position];
         if(position == 0)
-            mLeftFork = context.mForks[context.N - 1];
+            mLeftFork = context.forks[context.N - 1];
         else
-            mLeftFork = context.mForks[position - 1];
+            mLeftFork = context.forks[position - 1];
 
         thread = new Thread(this);
     }
@@ -67,10 +69,12 @@ public class Philosopher implements Runnable{
                 //Take fork
                 hungry();
                 System.out.println(mName + " is hungry");
-                mLeftFork.take();
+                //mLeftFork.tryLock(1000, TimeUnit.MILLISECONDS);
+                mLeftFork.lock();
                 System.out.println(mName + " takes left fork");
                 Thread.sleep(500);
-                mRightFork.take();
+                //mRightFork.tryLock(1000, TimeUnit.MILLISECONDS);
+                mLeftFork.lock();
                 System.out.println(mName + " takes right fork");
                 Thread.sleep(500);
                 //Eat
@@ -79,17 +83,19 @@ public class Philosopher implements Runnable{
                 Thread.sleep(1000);
                 //Drop fork
                 System.out.println(mName + " is full");
-                mLeftFork.release();
+                if(mLeftFork.tryLock())
+                    mLeftFork.unlock();
                 System.out.println(mName + " releases left fork");
-                mRightFork.release();
+                if(mRightFork.tryLock())
+                    mRightFork.unlock();
                 System.out.println(mName + " releases right fork");
                 Thread.sleep(1000);
             }
         } catch (InterruptedException ie) {
-
+            System.out.println(mName + " error");
         }
-        mLeftFork.releaseIfMine();
-        mRightFork.releaseIfMine();
+        mLeftFork.unlock();
+        mRightFork.unlock();
         thread = new Thread(this);
 
     }
