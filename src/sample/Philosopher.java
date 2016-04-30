@@ -1,6 +1,6 @@
 package sample;
 
-import java.util.concurrent.locks.Lock;
+import java.util.Random;
 
 /**
  * Created by aqws3 on 4/29/16.
@@ -11,37 +11,37 @@ public class Philosopher implements Runnable{
 
     private String mName;
     private State mState;
-    private Lock mLeftFork, mRightFork;
-    private int mPosition;
-    private DiningPhilosophers mContext;
-    Thread thread;
+    private Fork mLeftFork, mRightFork;
+    private Random mRandom = new Random();
 
-    public Philosopher(DiningPhilosophers context, String name, int position){
-        mContext = context;
+    public Philosopher(String name, Fork leftFork, Fork rightFork){
         mName = name;
-        mPosition = position;
-        mState = State.THINKING;
-
-        mRightFork = context.forks[position];
-        if(position == 0)
-            mLeftFork = context.forks[context.N - 1];
-        else
-            mLeftFork = context.forks[position - 1];
-
-        thread = new Thread(this);
-    }
-
-
-    public void think() {
+        mLeftFork = leftFork;
+        mRightFork = rightFork;
         mState = State.THINKING;
     }
 
-    public void eat() {
+    @Override
+    public String toString() {
+        return mName;
+    }
+
+    public void think() throws InterruptedException{
+        mState = State.THINKING;
+        System.out.println(mName + " is thinking.");
+        Thread.sleep(100);
+    }
+
+    public void eat() throws InterruptedException {
         mState = State.EATING;
+        System.out.println(mName + " is eating");
+        Thread.sleep(100);
     }
 
-    public void hungry() {
+    public void hungry() throws InterruptedException{
         mState = State.HUNGRY;
+        System.out.println(mName + " is hungry");
+        Thread.sleep(100);
     }
 
     public boolean isHungry() {
@@ -57,47 +57,28 @@ public class Philosopher implements Runnable{
     }
 
 
-    //Threa.sleep simulates a costly action
+    //Thread.sleep simulates a costly action
     @Override
     public void run() {
         try {
             while (true) {
-                //Think: Sleep for a long while
-                think();
-                System.out.println(mName + " is thiking");
-                Thread.sleep(1000);
-                //Take fork
-                hungry();
-                System.out.println(mName + " is hungry");
-                //mLeftFork.tryLock(1000, TimeUnit.MILLISECONDS);
-                mLeftFork.lock();
-                System.out.println(mName + " takes left fork");
-                Thread.sleep(500);
-                //mRightFork.tryLock(1000, TimeUnit.MILLISECONDS);
-                mLeftFork.lock();
-                System.out.println(mName + " takes right fork");
-                Thread.sleep(500);
-                //Eat
-                eat();
-                System.out.println(mName + " is eating");
-                Thread.sleep(1000);
-                //Drop fork
-                System.out.println(mName + " is full");
-                if(mLeftFork.tryLock())
-                    mLeftFork.unlock();
-                System.out.println(mName + " releases left fork");
-                if(mRightFork.tryLock())
-                    mRightFork.unlock();
-                System.out.println(mName + " releases right fork");
-                Thread.sleep(1000);
+                //think();
+                //hungry();
+                if (mLeftFork.pickUp(this, "left")) {
+                    if (mRightFork.pickUp(this, "right")){
+                        eat();
+                        //System.out.println(mName + " is full");
+                        mRightFork.release(this, "right");
+                    }
+                    mLeftFork.release(this, "left");
+                }
             }
         } catch (InterruptedException ie) {
             System.out.println(mName + " error");
+            mLeftFork.release(this, "left");
+            mRightFork.release(this, "right");
+        } finally {
         }
-        mLeftFork.unlock();
-        mRightFork.unlock();
-        thread = new Thread(this);
-
     }
 
 }

@@ -1,13 +1,6 @@
 package sample;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
@@ -16,9 +9,12 @@ import javafx.stage.Stage;
 public class DiningPhilosophers extends Application{
     public static int N = 5;
     //Fork[] mForks = new Fork[N];
-    Lock forks[] = new ReentrantLock[N];
-    Philosopher[] mPhilosophers = new Philosopher[N];
-    String[] mNames = {"Aristoteles", "Platon", "Heraclito", "Pitagoras", "Nietzsche"};
+    Fork forks[] = new Fork[N];
+    Thread[] mThreads = new Thread[N];
+    String[] mNames = { "Aristoteles", "Platon", "Heraclito", "Pitagoras", "Nietzsche",
+                        "Goethe", "Seneca", "Euclides", "Einstein", "Eco",
+                        "Heidegger", "Hobbes", "Ivanov", "Kant", "Locke",
+                        "Marx", "Moore", "Reid", "Schaeffer", "Timon"};
 
 
     @Override
@@ -28,7 +24,7 @@ public class DiningPhilosophers extends Application{
         */
         Button startButton = new Button();
         startButton.setText("Start Simulation");
-        startButton.setOnAction((EventHandler<ActionEvent>) actionEvent -> new DiningPhilosophers().initialize());
+        startButton.setOnAction(actionEvent -> new DiningPhilosophers().initialize());
         StackPane root =  new StackPane();
         root.getChildren().add(startButton);
         Scene scene = new Scene(root, 600, 400);
@@ -39,17 +35,18 @@ public class DiningPhilosophers extends Application{
 
     public void initialize(){
         int i;
-        for (i = 0; i < 5; i++){
-            //mForks[i] = new Fork();
-            forks[i] = new ReentrantLock();
+        for (i = 0; i < N; i++){
+            forks[i] = new Fork();
+            forks[i].pos = i;
         }
 
-        for (i = 0; i < 5; i++) {
-            mPhilosophers[i] = new Philosopher(this, mNames[i] , i);
+        for (i = 0; i < N; i++) {
+            int right = (i == N-1) ? 0 : i+1 ;
+            mThreads[i] = new Thread(new Philosopher(mNames[i], forks[i], forks[right]));
         }
 
-        for (i = 0; i < 5; i++){
-            mPhilosophers[i].thread.start();
+        for (i = 0; i < N; i++){
+            mThreads[i].start();
         }
     }
 
