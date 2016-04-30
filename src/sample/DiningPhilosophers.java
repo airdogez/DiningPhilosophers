@@ -1,5 +1,8 @@
 package sample;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,6 +16,7 @@ import javafx.stage.Stage;
 public class DiningPhilosophers extends Application{
     public static int N = 5;
     Fork[] mForks = new Fork[N];
+    //Lock forks[] = new ReentrantLock[N];
     Philosopher[] mPhilosophers = new Philosopher[N];
     String[] mNames = {"Aristoteles", "Platon", "Heraclito", "Pitagoras", "Nietzsche"};
 
@@ -37,10 +41,11 @@ public class DiningPhilosophers extends Application{
         int i;
         for (i = 0; i < 5; i++){
             mForks[i] = new Fork();
+            //forks[i] = new ReentrantLock();
         }
 
         for (i = 0; i < 5; i++) {
-            mPhilosophers[i] = new Philosopher(this, mNames[i] , i++);
+            mPhilosophers[i] = new Philosopher(this, mNames[i] , i);
         }
 
         for (i = 0; i < 5; i++){

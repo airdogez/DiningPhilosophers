@@ -59,6 +59,7 @@ public class Philosopher implements Runnable{
     @Override
     public void run() {
         try {
+            while (true) {
                 //Think: Sleep for a long while
                 think();
                 System.out.println(mName + " is thiking");
@@ -67,8 +68,10 @@ public class Philosopher implements Runnable{
                 hungry();
                 System.out.println(mName + " is hungry");
                 mLeftFork.take();
+                System.out.println(mName + " takes left fork");
                 Thread.sleep(500);
                 mRightFork.take();
+                System.out.println(mName + " takes right fork");
                 Thread.sleep(500);
                 //Eat
                 eat();
@@ -77,9 +80,11 @@ public class Philosopher implements Runnable{
                 //Drop fork
                 System.out.println(mName + " is full");
                 mLeftFork.release();
+                System.out.println(mName + " releases left fork");
                 mRightFork.release();
+                System.out.println(mName + " releases right fork");
                 Thread.sleep(1000);
-
+            }
         } catch (InterruptedException ie) {
 
         }
