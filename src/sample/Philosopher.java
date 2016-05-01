@@ -12,7 +12,6 @@ public class Philosopher implements Runnable{
     private String mName;
     private State mState;
     private Fork mLeftFork, mRightFork;
-    private Random mRandom = new Random();
 
     public Philosopher(String name, Fork leftFork, Fork rightFork){
         mName = name;
@@ -29,19 +28,19 @@ public class Philosopher implements Runnable{
     public void think() throws InterruptedException{
         mState = State.THINKING;
         System.out.println(mName + " is thinking.");
-        Thread.sleep(100);
+        Thread.sleep(500);
     }
 
     public void eat() throws InterruptedException {
         mState = State.EATING;
         System.out.println(mName + " is eating");
-        Thread.sleep(100);
+        Thread.sleep(500);
     }
 
     public void hungry() throws InterruptedException{
         mState = State.HUNGRY;
         System.out.println(mName + " is hungry");
-        Thread.sleep(100);
+        Thread.sleep(500);
     }
 
     public boolean isHungry() {
@@ -62,15 +61,19 @@ public class Philosopher implements Runnable{
     public void run() {
         try {
             while (true) {
-                //think();
-                //hungry();
-                if (mLeftFork.pickUp(this, "left")) {
-                    if (mRightFork.pickUp(this, "right")){
-                        eat();
-                        //System.out.println(mName + " is full");
-                        mRightFork.release(this, "right");
-                    }
+                think();
+                hungry();
+                mLeftFork.pickUp(this, "left");
+                while (!mRightFork.pickUp(this, "right")){
                     mLeftFork.release(this, "left");
+                    Thread.sleep(5000);
+                    mLeftFork.pickUp(this, "left");
+                }
+                if(mLeftFork.isPicked(this) && mRightFork.isPicked(this)){
+                    eat();
+                    System.out.println(mName + " is full");
+                    mLeftFork.release(this, "left");
+                    mRightFork.release(this, "right");
                 }
             }
         } catch (InterruptedException ie) {

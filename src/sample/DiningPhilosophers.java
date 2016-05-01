@@ -7,7 +7,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class DiningPhilosophers extends Application{
-    public static int N = 5;
+    public static int N = 3;
     //Fork[] mForks = new Fork[N];
     Fork forks[] = new Fork[N];
     Thread[] mThreads = new Thread[N];
