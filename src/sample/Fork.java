@@ -3,10 +3,12 @@ package sample;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javafx.scene.control.CheckBox;
+
 /**
  * Created by aqws3 on 4/29/16.
  */
-public class Fork {
+public class Fork extends CheckBox{
     //Lock fork = new ReentrantLock();
     int pos;
     boolean picked = false;

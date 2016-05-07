@@ -2,10 +2,12 @@ package sample;
 
 import java.util.Random;
 
+import javafx.scene.control.CheckBox;
+
 /**
  * Created by aqws3 on 4/29/16.
  */
-public class Philosopher implements Runnable{
+public class Philosopher extends CheckBox implements Runnable {
 
     enum State {THINKING, HUNGRY, EATING}
 
@@ -14,6 +16,7 @@ public class Philosopher implements Runnable{
     private Fork mLeftFork, mRightFork;
 
     public Philosopher(String name, Fork leftFork, Fork rightFork){
+        super();
         mName = name;
         mLeftFork = leftFork;
         mRightFork = rightFork;
@@ -34,7 +37,8 @@ public class Philosopher implements Runnable{
     public void eat() throws InterruptedException {
         mState = State.EATING;
         System.out.println(mName + " is eating");
-        Thread.sleep(500);
+        setSelected(true);
+        Thread.sleep(4000);
     }
 
     public void hungry() throws InterruptedException{
@@ -71,6 +75,7 @@ public class Philosopher implements Runnable{
                 }
                 if(mLeftFork.isPicked(this) && mRightFork.isPicked(this)){
                     eat();
+                    setSelected(false);
                     System.out.println(mName + " is full");
                     mLeftFork.release(this, "left");
                     mRightFork.release(this, "right");
