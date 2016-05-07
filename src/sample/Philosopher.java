@@ -38,7 +38,7 @@ public class Philosopher extends CheckBox implements Runnable {
         mState = State.EATING;
         System.out.println(mName + " is eating");
         setSelected(true);
-        Thread.sleep(4000);
+        Thread.sleep(500);
     }
 
     public void hungry() throws InterruptedException{
@@ -70,7 +70,7 @@ public class Philosopher extends CheckBox implements Runnable {
                 mLeftFork.pickUp(this, "left");
                 while (!mRightFork.pickUp(this, "right")){
                     mLeftFork.release(this, "left");
-                    Thread.sleep(5000);
+                    Thread.sleep(1000);
                     mLeftFork.pickUp(this, "left");
                 }
                 if(mLeftFork.isPicked(this) && mRightFork.isPicked(this)){

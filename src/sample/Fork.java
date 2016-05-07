@@ -20,7 +20,6 @@ public class Fork extends CheckBox{
     }
 
     public boolean isPicked(Philosopher who) {
-
         return picked && who == owner;
     }
 
@@ -29,6 +28,7 @@ public class Fork extends CheckBox{
         if(!picked && owner == null){
             owner = who;
             System.out.println(who + " picked up " + what + " " + this);
+            setSelected(true);
             picked = true;
             return true;
         }
@@ -36,9 +36,10 @@ public class Fork extends CheckBox{
     }
 
     public void release(Philosopher who, String what){
-        if (picked && owner == who){
+        if (picked ){
             owner = null;
             picked = false;
+            setSelected(false);
             System.out.println(who + " released " + what + " " + this);
         }
     }
